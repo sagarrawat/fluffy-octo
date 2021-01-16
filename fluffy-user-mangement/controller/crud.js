@@ -1,9 +1,15 @@
+const bcrypt=require('bcrypt');
+const saltRounds = 10;
+
 'use strict';
 module.exports = {
     adduser: async (req, res)=>{
-        const {username, firstname, lastname, profilepic, email, mobileno,nationality, age}=req.body;   
+        const {username, password, firstname, lastname, profilepic, email, mobileno,nationality, age}=req.body;   
+        const hash=await bcrypt.hash(password, saltRounds);
+        console.log(hash);
         req.models.users.create({
                 username: username,
+                password: hash,
                 firstname: firstname,
                 lastname: lastname,
                 profilepicture:profilepic,
@@ -68,5 +74,76 @@ module.exports = {
         else 
             res.status(400).send('Error');
     })
+    },
+
+    userlisting: async(req, res)=>{
+        let sortBy=req.query.sortBy;
+        let order=req.query.order;
+        // let str=req.query.search;
+        let nationality=req.query.nationality;
+        let minAge=req.query.minAge;
+        let maxAge=req.query.maxAge;
+
+        if(order=='asc') {
+        let data=req.models.users.findAll({
+            
+            $and: [ {
+                    age: { 
+                    $lt: minAge 
+                    }
+            },
+            {
+                age: {
+                    $gt: maxAge
+                }
+            },
+                {
+                    nationality:{
+                    $eq: nationality 
+                    }
+                }   
+              ],
+              order: [
+                  [sortBy,'ASC']
+              ]
+        }).then(function (data) {
+            if (data){ 
+            res.send(data);
+            }
+        else 
+            res.status(400).send('Error');
+        });  
+    }
+    if(order=='desc') {
+        let data=req.models.users.findAll({
+            $and: [ {
+                    age: { 
+                    $lt: minAge 
+                    }
+            },
+            {
+                age: {
+                    $gt: maxAge
+                }
+            },
+                {
+                    nationality:{
+                    $eq: nationality 
+                    }
+                }   
+              ],
+              order: [
+                  [sortBy,'DESC']
+              ]
+        }).then(function (data) {
+            if (data){ 
+            res.send(data);
+            }
+        else 
+            res.status(400).send('Error');
+        });  
+ 
+    }
+
     }
 }

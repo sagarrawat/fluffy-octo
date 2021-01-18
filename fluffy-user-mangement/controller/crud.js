@@ -83,38 +83,40 @@ module.exports = {
         let nationality=req.query.nationality;
         let minAge=req.query.minAge;
         let maxAge=req.query.maxAge;
+    
+        // console.log("here",data);
 
-        if(order=='asc') {
-        let data=req.models.users.findAll({
-            
-            $and: [ {
-                    age: { 
-                    $lt: minAge 
-                    }
+        if(order=="asc") {
+        let data=await req.models.users.findAll({
+            $and: [{
+                age: {
+                $lt: minAge
+                }
             },
             {
                 age: {
                     $gt: maxAge
                 }
             },
-                {
-                    nationality:{
-                    $eq: nationality 
-                    }
-                }   
-              ],
-              order: [
-                  [sortBy,'ASC']
-              ]
-        }).then(function (data) {
-            if (data){ 
-            res.send(data);
+            {
+                nationality:{
+                $eq: nationality
+                }
             }
-        else 
-            res.status(400).send('Error');
-        });  
-    }
-    if(order=='desc') {
+        ],
+        order: [
+            [sortBy,'ASC']
+        ]
+        }).then(function (data) {
+                    if (data){ 
+                    res.send(data);
+                    }
+                else 
+                    res.status(400).send('Error');
+                }); 
+     }
+
+     if(order=='desc') {
         let data=req.models.users.findAll({
             $and: [ {
                     age: { 
@@ -144,6 +146,5 @@ module.exports = {
         });  
  
     }
-
     }
 }

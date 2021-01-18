@@ -9,11 +9,11 @@ var connectionPool = {
   };
 
 let getConnection=(pool,dbName)=>{
-  let username = process.env.DB_USERNAME ;
-  let password = process.env.DB_PASSWORD ;
-  
+  let username = "root" ;
+  let password = "Mahesh@g7" ;
+
 const sequelize = new Sequelize(dbName, username, password, {
-    host: 'localhost',
+  host: 'localhost',
     dialect: 'mysql',
     pool: pool,
     logging: false
